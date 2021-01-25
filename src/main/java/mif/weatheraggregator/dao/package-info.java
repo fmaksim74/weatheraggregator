@@ -1,0 +1,1 @@
+package mif.weatheraggregator.dao;
