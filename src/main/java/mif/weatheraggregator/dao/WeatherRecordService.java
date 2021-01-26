@@ -20,6 +20,7 @@ import mif.weatheraggregator.WeatherAggregatorApplication;
 @Service
 public class WeatherRecordService {
     
+    @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(WeatherAggregatorApplication.class); 
 
     @Autowired

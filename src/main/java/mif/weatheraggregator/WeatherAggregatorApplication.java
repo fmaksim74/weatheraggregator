@@ -57,7 +57,7 @@ public class WeatherAggregatorApplication {
 	}
     }
 
-    @Scheduled(initialDelayString = "PT10S", fixedRateString = "${aggregationRate:PT10S}")
+    @Scheduled(initialDelayString = "PT10S", fixedRateString = "${aggregationRate:PT1M}")
     @Transactional
     public void aggregateWearther() {
 	log.info("Requesting weather data...");
@@ -65,7 +65,7 @@ public class WeatherAggregatorApplication {
 	if (Objects.nonNull(providers)) {
 	    locations.forEach((l) -> providers.forEach((p) -> {
 		try {
-		    var svalue = p.getData(l);
+		    var svalue = p.getValue(l, "temp_c");
 		    if (!Strings.isEmpty(svalue)) {
 			var value = new BigDecimal(svalue);
 			WeatherRecord wr = new WeatherRecord(l, p.getName(), "temp_c", now, value);
@@ -84,10 +84,10 @@ public class WeatherAggregatorApplication {
     @GetMapping(path = "/avgTempC/{location}")
     public ResponseEntity<String> getAvgTempC(@PathVariable("location") String location,
 	    @RequestParam(name = "dt", required = false) LocalDate date) {
-	log.debug("Requested AVG for {}", location);
+	log.info("Requested AVG for {}", location);
 
 	var result = recordService
-		.getAvgByLocationAndParameterAndDate(location, null,
+		.getAvgByLocationAndParameterAndDate(location, "temp_c",
 			Objects.nonNull(date) ? LocalDateTime.of(date, LocalTime.MIN) : null);
 
 	return Objects.nonNull(result) ? ResponseEntity.ok(result.toString()) : ResponseEntity.noContent().build();
