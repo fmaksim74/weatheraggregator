@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -38,11 +39,14 @@ public class WeatherRecordPK implements Serializable {
     return this.parameter;
   }
 
+  @Basic
   public void setParameter(String parameter) {
     this.parameter = parameter;
   }
 
-  @Column(columnDefinition = "TIMESTAMP")
+  // For equal precision in java.time.LocaDateTime and H2 TIMESTAMP
+  // Different precision causes comparison fails.
+  @Column(columnDefinition = "TIMESTAMP(9)")
   private LocalDateTime date;
 
   public LocalDateTime getDate() {
@@ -53,6 +57,10 @@ public class WeatherRecordPK implements Serializable {
     this.date = date;
   }
 
+  public WeatherRecordPK() {
+      
+  }
+  
   public WeatherRecordPK(String location, String provider, String parameter, LocalDateTime datetime) {
     super();
     this.location = location;

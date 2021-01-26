@@ -4,14 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.util.Strings;
@@ -90,7 +87,7 @@ public class WeatherAggregatorApplication {
 	log.debug("Requested AVG for {}", location);
 
 	var result = recordService
-		.getAvgByLocationAndDate(location, null,
+		.getAvgByLocationAndParameterAndDate(location, null,
 			Objects.nonNull(date) ? LocalDateTime.of(date, LocalTime.MIN) : null);
 
 	return Objects.nonNull(result) ? ResponseEntity.ok(result.toString()) : ResponseEntity.noContent().build();
