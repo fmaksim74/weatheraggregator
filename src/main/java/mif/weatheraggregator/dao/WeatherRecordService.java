@@ -33,8 +33,6 @@ public class WeatherRecordService {
 		    + "   AND r.Id.parameter = :parameter"
 		    + "   AND r.Id.date = :datetime";
 	
-	log.info("Values: {}, {}, {}, {}", location, provider, parameter, datetime);
-	
 	return manager
 		.createQuery(jpql, WeatherRecord.class)
 		.setParameter("location", location)
@@ -105,7 +103,6 @@ public class WeatherRecordService {
     
     @Transactional
     public WeatherRecord save(WeatherRecord record) {
-	log.info(record.toString());
 	manager.persist(record);
 	manager.flush();
 	return record;
