@@ -10,7 +10,5 @@ class WeatherAggregatorApplicationTests {
     void contextLoads() {
 
     }
-    
-    
 
 }

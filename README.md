@@ -6,19 +6,18 @@ Service for collecting weather information from various free services with REST 
 1) WeatherApi.com
 
 
-## Instalation
+## Installation
 
 - Checkout project from github repository:
 ```git clone https://github.com/fmaksim74/weatheraggregator.git```
-
+- Goto ```weatheraggregator``` folder
 - Build the project:
 ```mvn package -DskipTests```
-
-- Copy ```/target/weatheraggregator*.jar/.../application.properties``` outside of jar file.
-- Set weatherapicom.apikey option to your API-KEY.
+- Copy ```./target/weatheraggregator-0.0.1-SNAPSHOT.jar/BOOT-INFclasses/application.properties``` outside of jar file into ```./target```.
+- Set weatherapicom.apikey option to your API-KEY in ```application.properties``` file.
 - Start service:
-```java -jar /target/....```
+```java -jar ./target/weatheraggregator-0.0.1-SNAPSHOT.jar```
 
-Now you can request to http://localhpst:8080/avgTempC/<location> for average temperature.
+Now you can request to ```http://localhpst:8080/avgTempC/<location>``` for average temperature.
 
 
