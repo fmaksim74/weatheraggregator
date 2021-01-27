@@ -6,13 +6,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus.Series;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,19 +38,20 @@ public class WeatherApiCom implements WeatherProvider, ResponseErrorHandler {
 	return WeatherApiCom.HOME_URL;
     }
 
-    private static final String BASE_URL = "http://api.weatherapi.com/v1";
-    private static final String CURRENT_WEATHER = "/current.json?key=%s&q=%s";
-
     @Value("${weatherapicom.key:21b955b8f8ea4d71a36132704212201}")
     private String apiKey;
-
-    private final StringBuffer sbuf = new StringBuffer();
+    public String getApiKey() {
+	return this.apiKey;
+    }
 
     private RestTemplate restTemplate;
 
     @Autowired
     public void setRestTemplate(RestTemplateBuilder restTemplateBuilder) {
-	this.restTemplate = restTemplateBuilder.errorHandler(this).build();
+	this.restTemplate = restTemplateBuilder
+		.rootUri("http://api.weatherapi.com")
+		.errorHandler(this)
+		.build();
     }
 
     @Autowired
@@ -55,22 +59,24 @@ public class WeatherApiCom implements WeatherProvider, ResponseErrorHandler {
 
     private String currentLocation;
 
-    private String buildRequestURI(String location) {
-	currentLocation = location;
-	sbuf.setLength(0);
-	return sbuf.append(WeatherApiCom.BASE_URL)
-		.append(WeatherApiCom.CURRENT_WEATHER.formatted(this.apiKey, location)).toString();
-    }
-
     @Override
     public String getValue(String location, String parameter) {
-	String url = buildRequestURI(location);
-	ResponseEntity<String> data = restTemplate.getForEntity(url, String.class);
-	if (data.getStatusCode().series() == Series.CLIENT_ERROR) {
-	    log4xxError(data.getBody());
+
+	this.currentLocation = location;
+	
+	HttpHeaders httpHeaders = new HttpHeaders();
+	httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+	
+	HttpEntity<Void> httpEntity = new HttpEntity<>(httpHeaders);
+	
+	ResponseEntity<String> response =  this.restTemplate
+		.exchange("/v1/current.json?key={key}&q={location}", HttpMethod.GET, httpEntity, String.class, this.apiKey, location);
+
+	if (response.getStatusCode().series() == Series.CLIENT_ERROR) {
+	    log4xxError(response.getBody());
 	    return null;
 	}
-	return readParameter(data.getBody(), parameter);
+	return readParameter(response.getBody(), parameter);
     }
 
     private String readParameter(String body, String parameter) {
@@ -86,7 +92,7 @@ public class WeatherApiCom implements WeatherProvider, ResponseErrorHandler {
     }
 
     private void log4xxError(String body) {
-	log.warn("{}: Request faild for {} with response: {}", WeatherApiCom.NAME, currentLocation, body);
+	log.warn("{}: Request faild for \"{}\" with response: {}", WeatherApiCom.NAME, currentLocation, body);
     }
 
     @Override

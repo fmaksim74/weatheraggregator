@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
-
-import mif.weatheraggregator.dao.*;
+import mif.weatheraggregator.dao.WeatherRecord;
+import mif.weatheraggregator.dao.WeatherRecordPK;
+import mif.weatheraggregator.dao.WeatherRecordService;
 
 @DataJpaTest
 @ContextConfiguration(classes = {WeatherRecordService.class})
