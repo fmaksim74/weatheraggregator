@@ -18,6 +18,6 @@ Service for collecting weather information from various free services with REST 
 - Start service:
 ```java -jar ./target/weatheraggregator-0.0.1-SNAPSHOT.jar```
 
-Now you can request to ```http://localhpst:8080/avgTempC/<location>``` for average temperature.
+Now you can request to ```http://localhost:8080/avgTempC/<location>``` for average temperature.
 
 
